@@ -7,8 +7,16 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mellen-code/field-guide-to-aliens.git"
+  },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mellen-code/field-guide-to-aliens/issues"
+  },
+  "homepage": "https://github.com/mellen-code/field-guide-to-aliens#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2"
