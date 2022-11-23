@@ -2,8 +2,11 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const PORT = 8000
+const MongoClient = require('mongodb').MongoClient
+const connectionString = 'mongodb+srv://yoda:maytheforcebe@cluster0.9kzzlr6.mongodb.net/?retryWrites=true&w=majority'
 
 app.use(cors())
+app.use(express.json())
 
 const aliens = {
     'humans': {
@@ -64,18 +67,35 @@ const aliens = {
     }
 }
 
-app.get('/', (request, response) => {
-    response.sendFile(__dirname, '/index.html')
-})
+// Set up Mongo Connection:
+MongoClient.connect(connectionString, {useUnifiedTopology: true, useNewUrlParser: true})
+    .then(client => {
+        console.log('Connected to Database')
+        const db = client.db('field-guide-to-aliens')
+        const infoCollection = db.collection('field-guide-to-aliens-info')
+   
+    app.get('/', (request, response) => {
+        response.sendFile(__dirname, '/index.html')
+    })
 
-app.get('/api/:alienName', (request, response) => {
-    const entry = request.params.alienName.toLowerCase();
-    if (aliens[entry]) {
-        response.json(aliens[entry])
-    } else {
-        response.json(aliens['humans'])
-    }
+    app.get('/api/:alienName', (request, response) => {
+        const entry = request.params.alienName.toLowerCase();
+            // if (aliens[entry]) {
+            //     response.json(aliens[entry])
+            // } else {
+            //     response.json(aliens['humans'])
+            // }
+        // Code for hit MongoDB db to pull requested data:
+        infoCollection.find({name: entry}).toArray()
+        .then(results => {
+            console.log(results)
+            response.json(results[0])
+        })
+        .catch(error => console.error(error))
+    })
+
 })
+.catch(error => console.error(error))
 
 app.listen(process.env.PORT || PORT, () => {
     console.log(`Server is running on port ${PORT}`)
